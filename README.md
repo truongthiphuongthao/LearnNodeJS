@@ -1,4 +1,4 @@
-** Create login simple by nodejs, mongoose, express **
+**Create login simple by nodejs, mongoose, express**
 #### Includes the following functions: register and login
 ###### server: file app.js
 ###### model: file use to connect database, schema User
