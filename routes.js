@@ -16,16 +16,16 @@ router.get('/', async(req, res)=>{
 })
 // handle method post register
 router.post('/register', async(req, res)=>{
-	let username = req.body.username
-	let user  = await User.findOne({username: username})
-	// case 1: User exist
-	if(user!=null){
-		console.log("Register Failed")
-		res.setHeader("Content-Type", "text/html")
-		return res.send("Register Failed")
-	}
-	// case 2: User not exist
-	else{
+	try{
+		let username = req.body.username
+		let user  = await User.findOne({username: username})
+		// case 1: User exist
+		if(user != null){
+			console.log("Register Failed")
+			res.setHeader("Content-Type", "text/html")
+			return res.send("Register Failed")
+		}
+		// case 2: User not exist
 		let password = crypto.createHash('sha256').update(req.body.psw).digest('base64')
 		let date = new Date()
 		let newUser = await new User({
@@ -33,40 +33,35 @@ router.post('/register', async(req, res)=>{
 			password: password,
 			date: date
 		})
-		await newUser.save(function(err, savedUser){
-			if(err){
-				console.log(err)
-				throw err
-			}
-			else{
-				console.log("Register Success")
-				res.setHeader("Content-Type","text/html")
-				return res.send("Register Success")
-			}
-		})
+		await newUser.save()
+		console.log("Register Success")
 		console.log(newUser)
+		res.setHeader("Content-Type","text/html")
+		return res.send("Register Success")
+	}catch(err){
+		console.log(err)
+		throw err
 	}
 })
 // handle method post login
 router.post('/login', async(req, res)=>{
-	let username = req.body.username
-	let password = crypto.createHash('sha256').update(req.body.psw).digest('base64')
-	await User.findOne({username: username, password: password}, function(err, loginUser){
-		if(err){
-			console.log(err)
-			throw err
-		}
-		// case 1: User not resgister
-		if(!loginUser){
+	try{
+		let username = req.body.username
+		let password = crypto.createHash('sha256').update(req.body.psw).digest('base64')
+		let user = await User.findOne({username: username, password: password})
+		// case 1: not have user
+		if(!user){
 			console.log("Failed no such user")
 			res.setHeader("Content-Type", "text/html")
 			return res.send("Failed no such user")
 		}
-		// case 2: User have completed register
+		// case 2: have user
 		console.log("Success login")
 		res.setHeader("Content-Type", "text/html")
 		return res.send("Success login")
-	})
-
+	}catch(err){
+		console.log(err)
+		throw err
+	}
 })
 module.exports = router

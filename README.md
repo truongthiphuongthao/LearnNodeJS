@@ -3,4 +3,4 @@
 ###### server: file app.js
 ###### model: file use to connect database, schema User
 ###### page: register and login inside folder public/pages 
-###### controller: as routes, handle method post and get
+###### routes: as routes, handle method post and get
